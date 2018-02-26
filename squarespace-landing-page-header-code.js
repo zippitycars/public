@@ -33,6 +33,16 @@ function showSchedule() {
         return;
       }
 
+      const nextDate = LuxonDt.fromISO(results[0]);
+      const now = LuxonDt.local();
+      const serviceIsToday = now.hasSame(nextDate, 'day');
+      const advertiseToday = serviceIsToday && now.hour <= 12;
+
+      // If service is happening today, don't include today's date in the dates list
+      if (serviceIsToday) {
+        results.schedule.shift();
+      }
+
       // Format the dates like "January 12"
       const humanizedDates = results.schedule.map((date) => {
         return LuxonDt.fromISO(date).toLocaleString({
@@ -41,10 +51,11 @@ function showSchedule() {
         });
       });
 
-      const nextDate = LuxonDt.fromISO(results[0]);
-      const now = LuxonDt.local();
-      const serviceIsToday = now.hasSame(nextDate, 'day');
-      const advertiseToday = serviceIsToday && now.hour <= 12;
+      const weekdays = results.schedule.map((date) => {
+        return LuxonDt.fromISO(date).toLocaleString({
+          weekday: 'long',
+        });
+      });
 
       // The HTML where we will insert the dates
       const textElement = document.getElementsByClassName(
@@ -56,14 +67,11 @@ function showSchedule() {
       if (advertiseToday) {
         htmlString += `<strong>We're here TODAY! Book service for today until 12pm at zippitycars.com!</strong>
         <br/>`;
+      } else {
+        htmlString += `<strong>We're coming on ${weekdays[0]}, ${
+          humanizedDates[0]
+        }!</strong>`;
       }
-
-      // If service is happening today, don't include today's date in the dates list
-      if (serviceIsToday) {
-        humanizedDates.shift();
-      }
-
-      htmlString += `<strong>We're coming on ${humanizedDates[0]}!</strong>`;
 
       // Discard the first date b/c we used it in the headline
       // Only show up to 4 upcoming dates
