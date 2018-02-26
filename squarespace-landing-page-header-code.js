@@ -6,8 +6,6 @@ head.insertBefore(script, head.firstChild);
 
 document.addEventListener('DOMContentLoaded', ready);
 
-document.addEventListener('load');
-
 function ready() {
   // We query the API by location name eg. "Fidelity"
   const LOCATION_NAME = 'Tuck';
