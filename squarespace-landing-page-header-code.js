@@ -2,7 +2,7 @@
 var script = document.createElement('script');
 script.src = 'https://moment.github.io/luxon/global/luxon.min.js';
 var head = document.head;
-head.insetBefore(script, head.firstChild);
+head.insertBefore(script, head.firstChild);
 
 document.addEventListener('DOMContentLoaded', ready);
 
