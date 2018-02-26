@@ -5,15 +5,17 @@ var head = document.head;
 head.insertBefore(script, head.firstChild);
 
 // Wait for DOM loaded AND luxon loaded
-script.onload(() => {
-  if (document.readyState == 'loading') {
-    document.addEventListener('DOMContentLoaded', ready);
-  } else {
-    ready();
-  }
-});
+script.onload = ready;
 
 function ready() {
+  if (document.readyState == 'loading') {
+    document.addEventListener('DOMContentLoaded', showSchedule);
+  } else {
+    showSchedule();
+  }
+}
+
+function showSchedule() {
   // We query the API by location name eg. "Fidelity"
   const LOCATION_NAME = 'Tuck';
 
