@@ -36,7 +36,7 @@ function showSchedule() {
 
   // Get the location name from query string 'location' value
   // Eg. "?location=Fidelity"
-  const queryString = qs.parse(document.location.search);
+  const queryString = Qs.parse(document.location.search.replace(/^\?/, ''));
 
   if (!queryString || !queryString.location) {
     return;
