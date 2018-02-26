@@ -1,13 +1,27 @@
-// Add Luxon
-var script = document.createElement('script');
-script.src = 'https://moment.github.io/luxon/global/luxon.min.js';
 var head = document.head;
-head.insertBefore(script, head.firstChild);
+
+// Add Luxon
+var luxonScript = document.createElement('script');
+luxonScript.src = 'https://moment.github.io/luxon/global/luxon.min.js';
+head.insertBefore(luxonScript, head.firstChild);
+
+// Add qs
+var qsScript = document.createElement('script');
+qsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min.js';
+head.insertBefore(qsScript, head.firstChild);
 
 // Wait for DOM loaded AND luxon loaded
-script.onload = ready;
+luxonScript.onload = ready;
+qsScript.onload = ready;
+
+var readyMarker = false;
 
 function ready() {
+  // ready must be called twice (by both script tags) to execute fully
+  if (!readyMarker) {
+    return (readyMarker = true);
+  }
+
   if (document.readyState == 'loading') {
     document.addEventListener('DOMContentLoaded', showSchedule);
   } else {
@@ -19,6 +33,16 @@ function showSchedule() {
   // We query the API by location name eg. "Fidelity"
   // In production we set this inside the Squarespace Header Code box
   // const LOCATION_NAME = 'Tuck';
+
+  // Get the location name from query string 'location' value
+  // Eg. "?location=Fidelity"
+  const queryString = qs.parse(document.location.search);
+
+  if (!queryString || !queryString.location) {
+    return;
+  }
+
+  const LOCATION_NAME = queryString.location;
 
   const LuxonDt = luxon.DateTime;
 
