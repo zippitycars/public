@@ -1,9 +1,12 @@
 // Add Luxon
 var script = document.createElement('script');
 script.src = 'https://moment.github.io/luxon/global/luxon.min.js';
-document.head.appendChild(script);
+var head = document.head;
+head.insetBefore(script, head.firstChild);
 
 document.addEventListener('DOMContentLoaded', ready);
+
+document.addEventListener('load');
 
 function ready() {
   // We query the API by location name eg. "Fidelity"
