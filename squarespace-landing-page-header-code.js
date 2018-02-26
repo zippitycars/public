@@ -65,10 +65,10 @@ function showSchedule() {
         return;
       }
 
-      const nextDate = LuxonDt.fromISO(results[0]);
+      const nextDate = LuxonDt.fromISO(results.schedule[0]);
       const now = LuxonDt.local();
       const serviceIsToday = now.hasSame(nextDate, 'day');
-      const advertiseToday = serviceIsToday && now.hour <= 12;
+      const advertiseToday = serviceIsToday && now.hour < 12;
 
       // If service is happening today, don't include today's date in the dates list
       if (serviceIsToday) {
@@ -97,8 +97,7 @@ function showSchedule() {
       let htmlString = '';
 
       if (advertiseToday) {
-        htmlString += `<strong>We're here TODAY! Book service for today until 12pm at zippitycars.com!</strong>
-        <br/>`;
+        htmlString += `<strong>We're here TODAY! Book service for today until 12pm at zippitycars.com!</strong>`;
       } else {
         htmlString += `<strong>We're coming on ${weekdays[0]}, ${
           humanizedDates[0]
