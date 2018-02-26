@@ -63,9 +63,7 @@ function showSchedule() {
         humanizedDates.shift();
       }
 
-      htmlString += `<strong>We're coming next on ${
-        humanizedDates[0]
-      }!</strong>`;
+      htmlString += `<strong>We're coming on ${humanizedDates[0]}!</strong>`;
 
       // Discard the first date b/c we used it in the headline
       // Only show up to 4 upcoming dates
@@ -79,7 +77,7 @@ function showSchedule() {
         });
 
       if (upcomingDates.length > 0) {
-        htmlString += `<br/>More services available on ${upcomingDates.join(
+        htmlString += `<br/><br/>More services available on ${upcomingDates.join(
           '',
         )}`;
       }
