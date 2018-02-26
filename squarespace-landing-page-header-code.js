@@ -44,6 +44,14 @@ function showSchedule() {
 
   const LOCATION_NAME = queryString.location;
 
+  // Append location as query string to the action buttons
+  // so we can use it in the form on the next page
+  const buttons = document.querySelectorAll('.sqs-slice-buttons a');
+
+  buttons.forEach((button) => {
+    button.href += `?SQF_LOCATION=${LOCATION_NAME}`;
+  });
+
   const LuxonDt = luxon.DateTime;
 
   const fetchUrl =
