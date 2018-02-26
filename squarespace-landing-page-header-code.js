@@ -4,7 +4,14 @@ script.src = 'https://moment.github.io/luxon/global/luxon.min.js';
 var head = document.head;
 head.insertBefore(script, head.firstChild);
 
-document.addEventListener('DOMContentLoaded', ready);
+// Wait for DOM loaded AND luxon loaded
+script.onload(() => {
+  if (document.readyState == 'loading') {
+    document.addEventListener('DOMContentLoaded', ready);
+  } else {
+    ready();
+  }
+});
 
 function ready() {
   // We query the API by location name eg. "Fidelity"
