@@ -17,7 +17,8 @@ function ready() {
 
 function showSchedule() {
   // We query the API by location name eg. "Fidelity"
-  const LOCATION_NAME = 'Tuck';
+  // In production we set this inside the Squarespace Header Code box
+  // const LOCATION_NAME = 'Tuck';
 
   const LuxonDt = luxon.DateTime;
 
