@@ -54,7 +54,7 @@ function showSchedule() {
 
   const LuxonDt = luxon.DateTime;
 
-  const fetchClientsUrl = '/brain2/client_location';
+  const fetchClientsUrl = 'https://brain2.zippitycars.com/client_location';
 
   fetch(fetchClientsUrl)
     .then((results) => results.json())
@@ -68,7 +68,7 @@ function showSchedule() {
         return;
       }
 
-      const fetchScheduleUrl = `/brain2/schedule?filter={ "client_location_id": ${
+      const fetchScheduleUrl = `https://brain2.zippitycars.com/schedule?filter={ "client_location_id": ${
         client.client_location_id
       }&sort=["start_time", "ASC"] }`;
 
