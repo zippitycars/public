@@ -42,7 +42,7 @@ function showSchedule() {
     return;
   }
 
-  const LOCATION_NAME = queryString.location;
+  const LOCATION_NAME = queryString.location.toLowerCase();
 
   // Append location as query string to the action buttons
   // so we can use it in the form on the next page
@@ -54,73 +54,95 @@ function showSchedule() {
 
   const LuxonDt = luxon.DateTime;
 
-  const fetchUrl =
-    'https://brain.zippitycars.com/schedule?location=' + LOCATION_NAME;
+  const fetchClientsUrl = '/brain2/client_location';
 
-  fetch(fetchUrl)
+  fetch(fetchClientsUrl)
     .then((results) => results.json())
     .then((results) => {
-      console.log(results);
-      if (!results || !results.schedule || results.schedule.length === 0) {
+      return results.find(
+        (client) => client.short_name.toLowerCase() === LOCATION_NAME,
+      );
+    })
+    .then((client) => {
+      if (!client || !client.client_location_id) {
         return;
       }
 
-      const nextDate = LuxonDt.fromISO(results.schedule[0]);
-      const now = LuxonDt.local();
-      const serviceIsToday = now.hasSame(nextDate, 'day');
-      const advertiseToday = serviceIsToday && now.hour < 12;
+      const fetchScheduleUrl = `/brain2/schedule?filter={ "client_location_id": ${
+        client.client_location_id
+      }&sort=["start_time", "ASC"] }`;
 
-      // If service is happening today, don't include today's date in the dates list
-      if (serviceIsToday) {
-        results.schedule.shift();
-      }
-
-      // Format the dates like "January 12"
-      const humanizedDates = results.schedule.map((date) => {
-        return LuxonDt.fromISO(date).toLocaleString({
-          month: 'long',
-          day: 'numeric',
-        });
-      });
-
-      const weekdays = results.schedule.map((date) => {
-        return LuxonDt.fromISO(date).toLocaleString({
-          weekday: 'long',
-        });
-      });
-
-      // The HTML where we will insert the dates
-      const textElement = document.getElementsByClassName(
-        'sqs-slice-body-content',
-      )[0];
-
-      let htmlString = '';
-
-      if (advertiseToday) {
-        htmlString += `<strong>We're here TODAY! Book service for today until 12pm at zippitycars.com!</strong>`;
-      } else {
-        htmlString += `<strong>We're coming on ${weekdays[0]}, ${
-          humanizedDates[0]
-        }!</strong>`;
-      }
-
-      // Discard the first date b/c we used it in the headline
-      // Only show up to 4 upcoming dates
-      const upcomingDates = humanizedDates
-        .slice(1, 5)
-        .map((date, index, array) => {
-          if (index + 1 === array.length) {
-            return `${date}`;
+      fetch(fetchUrl)
+        .then((results) => results.json())
+        .then((results) => {
+          console.log(results);
+          if (!results || results.length === 0) {
+            return;
           }
-          return `${date} | `;
+
+          const nextDate = LuxonDt.fromISO(
+            results[0].start_time.subtring(0, 10),
+          );
+          const now = LuxonDt.local();
+          const serviceIsToday = now.hasSame(nextDate, 'day');
+          const advertiseToday = serviceIsToday && now.hour < 12;
+
+          // If service is happening today, don't include today's date in the dates list
+          if (serviceIsToday) {
+            results.shift();
+          }
+
+          // Format the dates like "January 12"
+          const humanizedDates = results.map((instance) => {
+            return LuxonDt.fromISO(
+              instance.start_time.substring(0, 10),
+            ).toLocaleString({
+              month: 'long',
+              day: 'numeric',
+            });
+          });
+
+          const weekdays = results.map((instance) => {
+            return LuxonDt.fromISO(
+              instance.start_time.substring(0, 10),
+            ).toLocaleString({
+              weekday: 'long',
+            });
+          });
+
+          // The HTML where we will insert the dates
+          const textElement = document.getElementsByClassName(
+            'sqs-slice-body-content',
+          )[0];
+
+          let htmlString = '';
+
+          if (advertiseToday) {
+            htmlString += `<strong>We're here TODAY! Book service for today until 12pm at zippitycars.com!</strong>`;
+          } else {
+            htmlString += `<strong>We're coming on ${weekdays[0]}, ${
+              humanizedDates[0]
+            }!</strong>`;
+          }
+
+          // Discard the first date b/c we used it in the headline
+          // Only show up to 4 upcoming dates
+          const upcomingDates = humanizedDates
+            .slice(1, 5)
+            .map((date, index, array) => {
+              if (index + 1 === array.length) {
+                return `${date}`;
+              }
+              return `${date} | `;
+            });
+
+          if (upcomingDates.length > 0) {
+            htmlString += `<br/><br/><strong>More services available on ${upcomingDates.join(
+              '',
+            )}</strong>`;
+          }
+
+          return (textElement.innerHTML = htmlString);
         });
-
-      if (upcomingDates.length > 0) {
-        htmlString += `<br/><br/><strong>More services available on ${upcomingDates.join(
-          '',
-        )}</strong>`;
-      }
-
-      return (textElement.innerHTML = htmlString);
     });
 }
