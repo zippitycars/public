@@ -68,8 +68,7 @@ function showSchedule() {
         return;
       }
 
-      const yesterdayISO = luxonDt
-        .local()
+      const yesterdayISO = LuxonDt.local()
         .minus({ days: 1 })
         .toISODate();
 
