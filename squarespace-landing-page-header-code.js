@@ -72,7 +72,7 @@ function showSchedule() {
         client.client_location_id
       }&sort=["start_time", "ASC"] }`;
 
-      fetch(fetchUrl)
+      fetch(fetchScheduleUrl)
         .then((results) => results.json())
         .then((results) => {
           console.log(results);
