@@ -68,9 +68,14 @@ function showSchedule() {
         return;
       }
 
+      const yesterdayISO = luxonDt
+        .local()
+        .minus({ days: 1 })
+        .toISODate();
+
       const fetchScheduleUrl = `https://brain2.zippitycars.com/schedule?filter={"client_location_id": ${
         client.client_location_id
-      } }&sort=["start_time", "ASC"]`;
+      }, "start_time_after": ${yesterdayISO} }&sort=["start_time", "ASC"]`;
 
       fetch(fetchScheduleUrl)
         .then((results) => results.json())
@@ -80,9 +85,8 @@ function showSchedule() {
             return;
           }
 
-          const nextDate = LuxonDt.fromISO(
-            results[0].start_time.subtring(0, 10),
-          );
+          const nextInstanceStartTime = results[0].start_time.substring(0, 10);
+          const nextDate = LuxonDt.fromISO(nextInstanceStartTime);
           const now = LuxonDt.local();
           const serviceIsToday = now.hasSame(nextDate, 'day');
           const advertiseToday = serviceIsToday && now.hour < 12;
@@ -93,21 +97,22 @@ function showSchedule() {
           }
 
           // Format the dates like "January 12"
-          const humanizedDates = results.map((instance) => {
-            return LuxonDt.fromISO(
-              instance.start_time.substring(0, 10),
-            ).toLocaleString({
+          let humanizedDates = [];
+          let weekdays = [];
+
+          results.forEach((instance) => {
+            const startTime = instance.start_time.substring(0, 10);
+
+            const humanized = LuxonDt.fromISO(startTime).toLocaleString({
               month: 'long',
               day: 'numeric',
             });
-          });
+            humanizedDates.push(humanized);
 
-          const weekdays = results.map((instance) => {
-            return LuxonDt.fromISO(
-              instance.start_time.substring(0, 10),
-            ).toLocaleString({
+            const weekday = LuxonDt.fromISO(startTime).toLocaleString({
               weekday: 'long',
             });
+            weekdays.push(weekday);
           });
 
           // The HTML where we will insert the dates
