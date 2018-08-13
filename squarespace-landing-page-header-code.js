@@ -68,9 +68,9 @@ function showSchedule() {
         return;
       }
 
-      const fetchScheduleUrl = `https://brain2.zippitycars.com/schedule?filter={ "client_location_id": ${
+      const fetchScheduleUrl = `https://brain2.zippitycars.com/schedule?filter={"client_location_id": ${
         client.client_location_id
-      }&sort=["start_time", "ASC"] }`;
+      } }&sort=["start_time", "ASC"]`;
 
       fetch(fetchScheduleUrl)
         .then((results) => results.json())
