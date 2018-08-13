@@ -141,7 +141,7 @@ function showSchedule() {
             });
 
           if (upcomingDates.length > 0) {
-            htmlString += `<br/><br/><strong>More services available on ${upcomingDates.join(
+            htmlString += `<br/><br/><strong>More services available on <br/> ${upcomingDates.join(
               '',
             )}</strong>`;
           }
