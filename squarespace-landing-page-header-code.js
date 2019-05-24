@@ -54,7 +54,7 @@ function showSchedule() {
 
   const LuxonDt = luxon.DateTime;
 
-  const fetchClientsUrl = 'https://brain2.zippitycars.com/client_location';
+  const fetchClientsUrl = 'https://brain2.zippitycars.com/client-location';
 
   fetch(fetchClientsUrl)
     .then((results) => results.json())
